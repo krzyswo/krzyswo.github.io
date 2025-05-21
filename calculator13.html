@@ -9,22 +9,18 @@
       margin: 0;
       padding: 0;
       height: 100vh;
-      overflow: auto;
       font-family: Arial, sans-serif;
     }
     body {
       padding: 20px;
       display: flex;
       flex-wrap: wrap;
+      gap: 20px;
     }
-    .container {
-      flex: 1 1 300px;
-      min-width: 300px;
-      margin-right: 20px;
-    }
-    .history-wrapper {
-      flex: 1 1 300px;
-      min-width: 300px;
+    .container, .history-wrapper {
+      flex: 1 1 50%;
+      min-width: 350px;
+      max-width: 100%;
     }
     .history {
       max-height: 90vh;
@@ -51,11 +47,14 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      table-layout: fixed;
+      word-wrap: break-word;
     }
     th, td {
       border: 1px solid #ccc;
       padding: 5px;
       text-align: center;
+      font-size: 14px;
     }
     th { background-color: #f4f4f4; }
     .checkbox-container {
@@ -106,7 +105,6 @@
     <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?"></textarea>
   </div>
 
-  <!-- HISTORY WRAPPER: Toggle button and section are grouped here -->
   <div class="history-wrapper">
     <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
     <div class="history" id="historySection">
