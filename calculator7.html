@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator zarobków z historią</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .container, .history {
+            flex: 1 1 100%;
+            max-width: 100%;
+            padding: 10px;
+        }
+        @media (min-width: 768px) {
+            .container, .history {
+                flex: 1 1 48%;
+                max-width: 48%;
+            }
+        }
+        input, button, textarea {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 5px;
+            width: 100%;
+        }
+        .wynik {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .green { background-color: green; color: white; }
+        .gold { background-color: gold; color: black; }
+        .red { background-color: red; color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .checkbox-container {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kalkulator miesięczny</h2>
+        <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł">
+        <button id="startMonthly" class="green">Start licznika</button>
+
+        <button id="stopMonthly" class="red">Stop licznika</button>
+        <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+
+        <hr>
+
+        <h2>Kalkulator godzinowy</h2>
+        <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł">
+        <button id="startHourly" class="green">Start licznika</button>
+        <button id="stopHourly" class="red">Stop licznika</button>
+        <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+
+        <hr>
+
+        <h2>Opis sesji</h2>
+        <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?"></textarea>
+
+        <div class="checkbox-container">
+            <label><input type="checkbox" id="suppressConfirm"> Nie pokazuj więcej tego ostrzeżenia</label>
+        </div>
+    </div>
+
+    <div class="history">
+        <h3>Historia zarobków</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Typ</th>
+                    <th>Start</th>
+                    <th>Stop</th>
+                    <th>Zarobek (zł)</th>
+                    <th>Opis</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4"><strong>SUMA:</strong></td>
+                    <td colspan="2" id="totalEarnings">0.00 zł</td>
+                </tr>
+            </tfoot>
+        </table>
+        <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+        <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    </div>
+
+    <script>
+        let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart;
+        let monthlyRate, hourlyRate;
+
+        let history = JSON.parse(localStorage.getItem('earningHistory')) || [];
+        const suppressConfirm = localStorage.getItem('suppressConfirm') === 'true';
+        document.getElementById('suppressConfirm').checked = suppressConfirm;
+
+        renderHistory();
+
+        document.getElementById('suppressConfirm').addEventListener('change', function () {
+            localStorage.setItem('suppressConfirm', this.checked);
+        });
+
+        function confirmRestart() {
+            if (localStorage.getItem('suppressConfirm') === 'true') return true;
+            return confirm('Czy na pewno chcesz zrestartować licznik?');
+        }
+
+        document.getElementById('startMonthly').onclick = function() {
+            if (monthlyStart && !confirmRestart()) return;
+            clearInterval(monthlyTimer);
+            const wyplata = parseFloat(document.getElementById('wyplata').value);
+            if (!wyplata || wyplata <= 0) return alert('Podaj poprawną wypłatę miesięczną.');
+            monthlyRate = wyplata / (160 * 3600);
+            monthlyStart = Date.now();
+            monthlyTimer = setInterval(() => updateWynik('wynikMonthly', monthlyRate, monthlyStart), 1000);
+            this.classList.replace('green', 'gold');
+        };
+
+        document.getElementById('stopMonthly').onclick = function() {
+            if (!monthlyStart) return;
+            clearInterval(monthlyTimer);
+            const elapsed = (Date.now() - monthlyStart) / 1000;
+            const zarobek = monthlyRate * elapsed;
+            saveHistory('Miesięczny', monthlyStart, Date.now(), zarobek);
+            monthlyStart = null;
+            document.getElementById('startMonthly').classList.replace('gold', 'green');
+        };
+
+        document.getElementById('startHourly').onclick = function() {
+            if (hourlyStart && !confirmRestart()) return;
+            clearInterval(hourlyTimer);
+            const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
+            if (!stawka || stawka <= 0) return alert('Podaj poprawną stawkę godzinową.');
+            hourlyRate = stawka / 3600;
+            hourlyStart = Date.now();
+            hourlyTimer = setInterval(() => updateWynik('wynikHourly', hourlyRate, hourlyStart), 1000);
+            this.classList.replace('green', 'gold');
+        };
+
+        document.getElementById('stopHourly').onclick = function() {
+            if (!hourlyStart) return;
+            clearInterval(hourlyTimer);
+            const elapsed = (Date.now() - hourlyStart) / 1000;
+            const zarobek = hourlyRate * elapsed;
+            saveHistory('Godzinowy', hourlyStart, Date.now(), zarobek);
+            hourlyStart = null;
+            document.getElementById('startHourly').classList.replace('gold', 'green');
+        };
+
+        function updateWynik(id, rate, start) {
+            const elapsed = (Date.now() - start) / 1000;
+            document.getElementById(id).innerText = `Zarobiłeś: ${(rate * elapsed).toFixed(2)} zł`;
+        }
+
+        function saveHistory(type, start, stop, earned) {
+            const desc = document.getElementById('description').value;
+            const entry = {
+                id: Date.now(),
+                type,
+                start: new Date(start).toLocaleString(),
+                stop: new Date(stop).toLocaleString(),
+                earned: earned.toFixed(2),
+                description: desc
+            };
+            history.push(entry);
+            localStorage.setItem('earningHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function deleteEntry(id) {
+            history = history.filter(e => e.id !== id);
+            localStorage.setItem('earningHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            let total = 0;
+            history.forEach(entry => {
+                total += parseFloat(entry.earned);
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${entry.type}</td>
+                        <td>${entry.start}</td>
+                        <td>${entry.stop}</td>
+                        <td>${entry.earned}</td>
+                        <td>${entry.description}</td>
+                        <td><span class="delete-btn" onclick="deleteEntry(${entry.id})">🗑️</span></td>
+                    </tr>`;
+            });
+            document.getElementById('totalEarnings').innerText = total.toFixed(2) + ' zł';
+        }
+
+        function clearHistory() {
+            if (confirm('Czy na pewno chcesz wyczyścić całą historię?')) {
+                localStorage.removeItem('earningHistory');
+                history.length = 0;
+                renderHistory();
+            }
+        }
+
+        function exportCSV() {
+            let csv = 'Typ,Start,Stop,Zarobek (zł),Opis\n';
+            history.forEach(entry => {
+                csv += `${entry.type},${entry.start},${entry.stop},${entry.earned},"${entry.description.replace(/"/g, '""')}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'historia_zarobkow.csv';
+            link.click();
+        }
+    </script>
+</body>
+</html>
