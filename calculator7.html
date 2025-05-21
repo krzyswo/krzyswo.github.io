@@ -91,7 +91,8 @@
             <label><input type="checkbox" id="suppressConfirm"> Nie pokazuj więcej tego ostrzeżenia</label>
         </div>
     </div>
-    <div class="container">
+    <div class="container" id="historySection">
+<button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
         <h3>Historia zarobków</h3>
         <table id="historyTable">
             <thead>
@@ -241,6 +242,16 @@
             link.download = 'historia_zarobkow.csv';
             link.click();
         }
-    </script>
+    document.getElementById('toggleHistory').addEventListener('click', function() {
+    const section = document.getElementById('historySection');
+    if (section.style.display === 'none') {
+        section.style.display = '';
+        this.innerText = 'Ukryj historię';
+    } else {
+        section.style.display = 'none';
+        this.innerText = 'Pokaż historię';
+    }
+});
+</script>
 </body>
 </html>
