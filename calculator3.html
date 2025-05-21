@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator zarobków z historią</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            display: flex;
+        }
+        .container {
+            flex: 2;
+            margin-right: 20px;
+        }
+        .history {
+            flex: 1;
+            max-height: 500px;
+            overflow-y: auto;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
+        }
+        input, button { padding: 10px; font-size: 16px; margin-top: 5px; }
+        .wynik { margin-top: 20px; font-size: 24px; font-weight: bold; }
+        .green { background-color: green; color: white; }
+        .gold { background-color: gold; color: black; }
+        .red { background-color: red; color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kalkulator miesięczny</h2>
+        <label>Wpisz swoją miesięczną wypłatę:</label><br>
+        <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł"><br>
+        <button id="startMonthly" class="green">Start licznika</button>
+        <button id="stopMonthly" class="red">Stop licznika</button>
+        <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+
+        <hr>
+
+        <h2>Kalkulator godzinowy</h2>
+        <label>Wpisz swoją stawkę godzinową:</label><br>
+        <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł"><br>
+        <button id="startHourly" class="green">Start licznika</button>
+        <button id="stopHourly" class="red">Stop licznika</button>
+        <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+    </div>
+
+    <div class="history">
+        <h3>Historia zarobków</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Typ</th>
+                    <th>Start</th>
+                    <th>Stop</th>
+                    <th>Zarobek (zł)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+    </div>
+
+    <script>
+        let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart;
+        let monthlyRate, hourlyRate;
+
+        const history = JSON.parse(localStorage.getItem('earningHistory')) || [];
+        renderHistory();
+
+        document.getElementById('startMonthly').onclick = function() {
+            clearInterval(monthlyTimer);
+            const wyplata = parseFloat(document.getElementById('wyplata').value);
+            if (!wyplata || wyplata <= 0) {
+                alert('Podaj poprawną wypłatę miesięczną.');
+                return;
+            }
+            monthlyRate = wyplata / (160 * 3600);
+            monthlyStart = Date.now();
+
+            monthlyTimer = setInterval(() => {
+                const elapsed = (Date.now() - monthlyStart) / 1000;
+                document.getElementById('wynikMonthly').innerText = 
+                    `Zarobiłeś: ${(monthlyRate * elapsed).toFixed(2)} zł`;
+            }, 1000);
+
+            this.classList.replace('green', 'gold');
+        };
+
+        document.getElementById('stopMonthly').onclick = function() {
+            if (!monthlyStart) return;
+            clearInterval(monthlyTimer);
+            const elapsed = (Date.now() - monthlyStart) / 1000;
+            const zarobek = monthlyRate * elapsed;
+            saveHistory('Miesięczny', monthlyStart, Date.now(), zarobek);
+            monthlyStart = null;
+            document.getElementById('startMonthly').classList.replace('gold', 'green');
+        };
+
+        document.getElementById('startHourly').onclick = function() {
+            clearInterval(hourlyTimer);
+            const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
+            if (!stawka || stawka <= 0) {
+                alert('Podaj poprawną stawkę godzinową.');
+                return;
+            }
+            hourlyRate = stawka / 3600;
+            hourlyStart = Date.now();
+
+            hourlyTimer = setInterval(() => {
+                const elapsed = (Date.now() - hourlyStart) / 1000;
+                document.getElementById('wynikHourly').innerText = 
+                    `Zarobiłeś: ${(hourlyRate * elapsed).toFixed(2)} zł`;
+            }, 1000);
+
+            this.classList.replace('green', 'gold');
+        };
+
+        document.getElementById('stopHourly').onclick = function() {
+            if (!hourlyStart) return;
+            clearInterval(hourlyTimer);
+            const elapsed = (Date.now() - hourlyStart) / 1000;
+            const zarobek = hourlyRate * elapsed;
+            saveHistory('Godzinowy', hourlyStart, Date.now(), zarobek);
+            hourlyStart = null;
+            document.getElementById('startHourly').classList.replace('gold', 'green');
+        };
+
+        function saveHistory(type, start, stop, earned) {
+            history.push({
+                type,
+                start: new Date(start).toLocaleString(),
+                stop: new Date(stop).toLocaleString(),
+                earned: earned.toFixed(2)
+            });
+            localStorage.setItem('earningHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${entry.type}</td>
+                        <td>${entry.start}</td>
+                        <td>${entry.stop}</td>
+                        <td>${entry.earned}</td>
+                    </tr>`;
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Czy na pewno chcesz wyczyścić całą historię?')) {
+                localStorage.removeItem('earningHistory');
+                history.length = 0;
+                renderHistory();
+            }
+        }
+    </script>
+</body>
+</html>
