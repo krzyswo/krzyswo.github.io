@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator zarobków z historią</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --card: #f4f4f4;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #ffffff;
+      --card: #1e1e1e;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .container, .history-wrapper {
+      flex: 1 1 50%;
+      overflow-y: auto;
+      min-width: 0;
+    }
+
+    .history {
+      max-height: 100%;
+      overflow-y: auto;
+      border-left: 2px solid #ddd;
+      padding-left: 15px;
+      transition: all 0.3s ease;
+    }
+
+    input, button, textarea, select {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 5px;
+      width: 100%;
+      background-color: var(--card);
+      color: var(--text);
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: none;
+      overflow: hidden;
+    }
+
+    .wynik {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .green { background-color: green; color: white; }
+    .gold { background-color: gold; color: black; }
+    .red { background-color: red; color: white; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      z-index: 2;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    th { background-color: var(--card); }
+
+    .checkbox-container {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .delete-btn {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .delete-btn:hover {
+      text-decoration: underline;
+    }
+
+    .entry-low { background-color: #ffcccc; }
+    .entry-mid { background-color: #fff8b3; }
+    .entry-high { background-color: #ccffcc; }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .chart-container {
+      margin-top: 20px;
+    }
+
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .container, .history-wrapper {
+        flex: 1 1 100%;
+        max-height: none;
+        border-left: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <h2>Kalkulator</h2>
+      <button onclick="toggleDarkMode()">🌙 Tryb ciemny</button>
+    </div>
+    <h3>Miesięczny</h3>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł" />
+    <button id="startMonthly" class="green">Start</button>
+    <button id="stopMonthly" class="red">Stop</button>
+    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+
+    <h3>Godzinowy</h3>
+    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" />
+    <button id="startHourly" class="green">Start</button>
+    <button id="stopHourly" class="red">Stop</button>
+    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+
+    <h3>Opis sesji</h3>
+    <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?" oninput="autoResize(this)"></textarea>
+
+    <h3>Filtruj historię</h3>
+    <input type="text" id="searchInput" placeholder="Wyszukaj w historii..." oninput="filterHistory()" />
+
+    <div class="chart-container">
+      <canvas id="earningsChart" height="150"></canvas>
+    </div>
+  </div>
+
+  <div class="history-wrapper">
+    <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
+    <div class="history" id="historySection">
+      <h3>Historia zarobków</h3>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Zarobek (zł)</th>
+            <th>Opis</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><strong>SUMA:</strong></td>
+            <td colspan="2" id="totalEarnings">0.00 zł</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+    }
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
