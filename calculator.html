@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator zarobków godzinowych</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { padding: 10px; font-size: 16px; }
+        .wynik { margin-top: 20px; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <label>Wpisz swoją miesięczną wypłatę:</label><br>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł"><br><br>
+
+    <button onclick="start()">Start licznika</button>
+
+    <div class="wynik" id="wynik">Zarobiłeś: 0 zł</div>
+
+    <script>
+        let startCzas;
+        let timer;
+
+        function start() {
+            clearInterval(timer);
+            const wyplata = parseFloat(document.getElementById('wyplata').value);
+            if (!wyplata || wyplata <= 0) {
+                alert('Podaj poprawną wypłatę.');
+                return;
+            }
+            startCzas = new Date().getTime();
+
+            const zarobekNaSekunde = wyplata / (160 * 60 * 60); // zarobek na sekundę
+
+            timer = setInterval(() => {
+                const teraz = new Date().getTime();
+                const sekundy = (teraz - startCzas) / 1000;
+                const zarobione = zarobekNaSekunde * sekundy;
+                document.getElementById('wynik').innerText = 
+                    `Zarobiłeś: ${zarobione.toFixed(2)} zł`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
