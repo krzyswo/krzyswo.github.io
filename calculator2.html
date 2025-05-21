@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator zarobków</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { padding: 10px; font-size: 16px; margin-top: 5px; }
+        .wynik { margin-top: 20px; font-size: 24px; font-weight: bold; }
+        .green { background-color: green; color: white; }
+        .gold { background-color: gold; color: black; }
+        .red { background-color: red; color: white; }
+    </style>
+</head>
+<body>
+    <h2>Kalkulator miesięczny</h2>
+    <label>Wpisz swoją miesięczną wypłatę:</label><br>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł"><br>
+    <button id="startMonthly" class="green">Start licznika</button>
+    <button id="stopMonthly" class="red">Stop licznika</button>
+    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+
+    <hr>
+
+    <h2>Kalkulator godzinowy</h2>
+    <label>Wpisz swoją stawkę godzinową:</label><br>
+    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł"><br>
+    <button id="startHourly" class="green">Start licznika</button>
+    <button id="stopHourly" class="red">Stop licznika</button>
+    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+
+    <script>
+        let monthlyTimer, hourlyTimer;
+        let monthlyStart, hourlyStart;
+
+        document.getElementById('startMonthly').onclick = function() {
+            clearInterval(monthlyTimer);
+            const wyplata = parseFloat(document.getElementById('wyplata').value);
+            if (!wyplata || wyplata <= 0) {
+                alert('Podaj poprawną wypłatę miesięczną.');
+                return;
+            }
+            monthlyStart = Date.now();
+            const zarobekNaSekunde = wyplata / (160 * 60 * 60);
+
+            monthlyTimer = setInterval(() => {
+                const elapsed = (Date.now() - monthlyStart) / 1000;
+                document.getElementById('wynikMonthly').innerText = 
+                    `Zarobiłeś: ${(zarobekNaSekunde * elapsed).toFixed(2)} zł`;
+            }, 1000);
+
+            this.classList.remove('green');
+            this.classList.add('gold');
+        };
+
+        document.getElementById('stopMonthly').onclick = function() {
+            clearInterval(monthlyTimer);
+            document.getElementById('startMonthly').classList.remove('gold');
+            document.getElementById('startMonthly').classList.add('green');
+        };
+
+        document.getElementById('startHourly').onclick = function() {
+            clearInterval(hourlyTimer);
+            const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
+            if (!stawka || stawka <= 0) {
+                alert('Podaj poprawną stawkę godzinową.');
+                return;
+            }
+            hourlyStart = Date.now();
+            const zarobekNaSekunde = stawka / 3600;
+
+            hourlyTimer = setInterval(() => {
+                const elapsed = (Date.now() - hourlyStart) / 1000;
+                document.getElementById('wynikHourly').innerText = 
+                    `Zarobiłeś: ${(zarobekNaSekunde * elapsed).toFixed(2)} zł`;
+            }, 1000);
+
+            this.classList.remove('green');
+            this.classList.add('gold');
+        };
+
+        document.getElementById('stopHourly').onclick = function() {
+            clearInterval(hourlyTimer);
+            document.getElementById('startHourly').classList.remove('gold');
+            document.getElementById('startHourly').classList.add('green');
+        };
+    </script>
+</body>
+</html>
