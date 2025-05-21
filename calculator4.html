@@ -1,0 +1,151 @@
+# Let me prepare the complete HTML/JavaScript file for direct download.
+html_code = """
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator zarobków z eksportem CSV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            display: flex;
+        }
+        .container {
+            flex: 2;
+            margin-right: 20px;
+        }
+        .history {
+            flex: 1;
+            max-height: 600px;
+            overflow-y: auto;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
+        }
+        input, button, textarea { padding: 10px; font-size: 16px; margin-top: 5px; }
+        .wynik { margin-top: 20px; font-size: 24px; font-weight: bold; }
+        .green { background-color: green; color: white; }
+        .gold { background-color: gold; color: black; }
+        .red { background-color: red; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 5px; text-align: center; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Kalkulator miesięczny</h2>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł"><br>
+    <button id="startMonthly" class="green">Start licznika</button>
+    <button id="stopMonthly" class="red">Stop licznika</button>
+    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+    <hr>
+    <h2>Kalkulator godzinowy</h2>
+    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł"><br>
+    <button id="startHourly" class="green">Start licznika</button>
+    <button id="stopHourly" class="red">Stop licznika</button>
+    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+</div>
+<div class="history">
+    <h3>Historia zarobków</h3>
+    <textarea id="description" placeholder="Opis sesji (opcjonalny)" rows="2" style="width: 100%;"></textarea>
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Start</th>
+                <th>Stop</th>
+                <th>Zarobek (zł)</th>
+                <th>Opis</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <h3 id="totalEarned">Łącznie zarobione: 0 zł</h3>
+    <button onclick="exportCSV()">Eksportuj do CSV</button>
+    <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+</div>
+<script>
+let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart, monthlyRate, hourlyRate;
+let history = JSON.parse(localStorage.getItem('earningHistory')) || [];
+renderHistory();
+
+function startCounter(type) {
+    const inputId = type === 'Miesięczny' ? 'wyplata' : 'stawkaGodzinowa';
+    const inputVal = parseFloat(document.getElementById(inputId).value);
+    if (!inputVal || inputVal <= 0) {
+        alert('Podaj poprawną wartość!');
+        return;
+    }
+    const rate = type === 'Miesięczny' ? inputVal / (160 * 3600) : inputVal / 3600;
+    const timerVar = type === 'Miesięczny' ? 'monthlyTimer' : 'hourlyTimer';
+    const startVar = type === 'Miesięczny' ? 'monthlyStart' : 'hourlyStart';
+    const wynikId = type === 'Miesięczny' ? 'wynikMonthly' : 'wynikHourly';
+    window[startVar] = Date.now();
+    clearInterval(window[timerVar]);
+    window[timerVar] = setInterval(() => {
+        const elapsed = (Date.now() - window[startVar]) / 1000;
+        document.getElementById(wynikId).innerText = 
+            `Zarobiłeś: ${(rate * elapsed).toFixed(2)} zł`;
+    }, 1000);
+    document.getElementById(type === 'Miesięczny' ? 'startMonthly' : 'startHourly').classList.replace('green', 'gold');
+}
+
+function stopCounter(type) {
+    const timerVar = type === 'Miesięczny' ? monthlyTimer : hourlyTimer;
+    const startVar = type === 'Miesięczny' ? monthlyStart : hourlyStart;
+    const rate = type === 'Miesięczny' ? monthlyRate : hourlyRate;
+    if (!window[startVar]) return;
+    clearInterval(timerVar);
+    const elapsed = (Date.now() - window[startVar]) / 1000;
+    const zarobek = rate * elapsed;
+    const description = document.getElementById('description').value.trim();
+    saveHistory(type, window[startVar], Date.now(), zarobek, description);
+    document.getElementById('description').value = '';
+    document.getElementById(type === 'Miesięczny' ? 'startMonthly' : 'startHourly').classList.replace('gold', 'green');
+}
+
+function saveHistory(type, start, stop, earned, description) {
+    history.push({type, start: new Date(start).toLocaleString(), stop: new Date(stop).toLocaleString(), earned: earned.toFixed(2), description});
+    localStorage.setItem('earningHistory', JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    let total = 0;
+    const tbody = document.querySelector('#historyTable tbody');
+    tbody.innerHTML = '';
+    history.forEach(e => {
+        tbody.innerHTML += `<tr><td>${e.type}</td><td>${e.start}</td><td>${e.stop}</td><td>${e.earned}</td><td>${e.description||''}</td></tr>`;
+        total += parseFloat(e.earned);
+    });
+    document.getElementById('totalEarned').innerText = `Łącznie zarobione: ${total.toFixed(2)} zł`;
+}
+
+function exportCSV() {
+    let csv = "Typ,Start,Stop,Zarobek,Opis\n";
+    history.forEach(e => csv += `"${e.type}","${e.start}","${e.stop}","${e.earned}","${e.description||''}"\n`);
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `raport_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+}
+
+function clearHistory() {
+    if(confirm('Czy wyczyścić historię?')){history=[];localStorage.clear();renderHistory();}
+}
+
+document.getElementById('startMonthly').onclick=()=>startCounter('Miesięczny');
+document.getElementById('stopMonthly').onclick=()=>stopCounter('Miesięczny');
+document.getElementById('startHourly').onclick=()=>startCounter('Godzinowy');
+document.getElementById('stopHourly').onclick=()=>stopCounter('Godzinowy');
+</script>
+</body>
+</html>
+"""
+
+with open("/mnt/data/full_calculator_with_export.html", "w", encoding="utf-8") as file:
+    file.write(html_code)
+
+"/mnt/data/full_calculator_with_export.html"
