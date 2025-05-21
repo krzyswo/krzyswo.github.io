@@ -104,8 +104,12 @@
     <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?"></textarea>
   </div>
 
-  <div class="history" id="historySection">
+  <!-- Toggle button OUTSIDE of .history so it's always visible -->
+  <div style="flex-basis: 100%; margin-top: 10px;">
     <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
+  </div>
+
+  <div class="history" id="historySection">
     <h3>Historia zarobków</h3>
     <table id="historyTable">
       <thead>
