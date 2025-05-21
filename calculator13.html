@@ -22,9 +22,11 @@
       min-width: 300px;
       margin-right: 20px;
     }
-    .history {
+    .history-wrapper {
       flex: 1 1 300px;
       min-width: 300px;
+    }
+    .history {
       max-height: 90vh;
       overflow-y: auto;
       border-left: 2px solid #ddd;
@@ -104,34 +106,33 @@
     <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?"></textarea>
   </div>
 
-  <!-- Toggle button OUTSIDE of .history so it's always visible -->
-  <div style="flex-basis: 100%; margin-top: 10px;">
+  <!-- HISTORY WRAPPER: Toggle button and section are grouped here -->
+  <div class="history-wrapper">
     <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
-  </div>
-
-  <div class="history" id="historySection">
-    <h3>Historia zarobków</h3>
-    <table id="historyTable">
-      <thead>
-        <tr>
-          <th>Typ</th>
-          <th>Start</th>
-          <th>Stop</th>
-          <th>Zarobek (zł)</th>
-          <th>Opis</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="4"><strong>SUMA:</strong></td>
-          <td colspan="2" id="totalEarnings">0.00 zł</td>
-        </tr>
-      </tfoot>
-    </table>
-    <button onclick="clearHistory()" class="red">Wyczyść historię</button>
-    <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    <div class="history" id="historySection">
+      <h3>Historia zarobków</h3>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Zarobek (zł)</th>
+            <th>Opis</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><strong>SUMA:</strong></td>
+            <td colspan="2" id="totalEarnings">0.00 zł</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    </div>
   </div>
 
   <script>
