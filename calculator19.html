@@ -1,19 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
-<meta charset="utf-8"/>
-<title>Kalkulator zarobków z historią</title>
-<style>
+  <meta charset="UTF-8" />
+  <title>Kalkulator zarobków z historią</title>
+  <style>
     * { box-sizing: border-box; }
-
     html, body {
       margin: 0;
       padding: 0;
       height: 100vh;
       font-family: Arial, sans-serif;
     }
-
     body {
       display: flex;
       flex-direction: row;
@@ -22,13 +19,11 @@
       height: 100vh;
       overflow: hidden;
     }
-
     .container, .history-wrapper {
       flex: 1 1 50%;
       overflow-y: auto;
       min-width: 0;
     }
-
     .history {
       max-height: 100%;
       overflow-y: auto;
@@ -36,24 +31,20 @@
       padding-left: 15px;
       transition: all 0.3s ease;
     }
-
     input, button, textarea {
       padding: 10px;
       font-size: 16px;
       margin-top: 5px;
       width: 100%;
     }
-
     .wynik {
       margin-top: 20px;
       font-size: 24px;
       font-weight: bold;
     }
-
     .green { background-color: green; color: white; }
     .gold { background-color: gold; color: black; }
     .red { background-color: red; color: white; }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -61,32 +52,25 @@
       table-layout: fixed;
       word-wrap: break-word;
     }
-
     th, td {
       border: 1px solid #ccc;
       padding: 5px;
       text-align: center;
       font-size: 14px;
     }
-
     th { background-color: #f4f4f4; }
-
     .checkbox-container {
       font-size: 14px;
       margin-top: 5px;
     }
-
     .delete-btn {
       color: red;
       cursor: pointer;
       font-weight: bold;
     }
-
     .delete-btn:hover {
       text-decoration: underline;
     }
-
-    /* ✅ RESPONSIVE */
     @media (max-width: 1000px) {
       body {
         flex-direction: column;
@@ -105,85 +89,69 @@
   </style>
 </head>
 <body>
-<div class="container">
-<h2>Kalkulator miesięczny</h2>
-<input id="wyplata" placeholder="Wypłata miesięczna w zł" type="number"/><div>
-<button class="green" id="startMonthly">Start licznika</button>
-<button class="red" id="stopMonthly">Stop licznika</button>
-</div>
-<button class="green" id="startMonthly">Start licznika</button>
-<button class="red" id="stopMonthly">Stop licznika</button>
-<div class="checkbox-container">
-<label>
-<input id="suppressConfirm" type="checkbox"/>
-        Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego
-      </label>
-</div>
-<label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
-<input id="startTimeMonthly" type="time"/>
-<label>
-<input id="includePastMonthly" type="checkbox"/>
-      Uwzględnij czas od wybranej godziny do teraz
-    </label>
-<label for="timezone">Strefa czasowa:</label>
-<select id="timezone">
-<option value="local">Lokalna</option>
-<option value="UTC">UTC</option>
-<option value="Europe/Warsaw">Europa/Warszawa</option>
-</select>
-<div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
-<hr/>
-<h2>Kalkulator godzinowy</h2>
-<input id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" type="number"/><div>
-<button class="green" id="startHourly">Start licznika</button>
-<button class="red" id="stopHourly">Stop licznika</button>
-</div>
-<button class="green" id="startHourly">Start licznika</button>
-<button class="red" id="stopHourly">Stop licznika</button>
-<div class="checkbox-container">
-<label>
-<input id="suppressConfirmHourly" type="checkbox"/>
-        Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego
-      </label>
-</div>
-<label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
-<input id="startTimeHourly" type="time"/>
-<label>
-<input id="includePastHourly" type="checkbox"/>
-      Uwzględnij czas od wybranej godziny do teraz
-    </label>
-<div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
-</div>
-<div class="history-wrapper">
-<h2>Opis sesji</h2>
-<textarea id="description" placeholder="Co robiłeś podczas tej sesji?" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea>
-<button class="green" id="toggleHistory" style="margin-bottom: 10px;">Ukryj historię</button>
-<div class="history" id="historySection">
-<h3>Historia zarobków</h3>
-<table id="historyTable">
-<thead>
-<tr>
-<th>Typ</th>
-<th>Start</th>
-<th>Stop</th>
-<th>Zarobek (zł)</th>
-<th>Opis</th>
-<th></th>
-</tr>
-</thead>
-<tbody></tbody>
-<tfoot>
-<tr>
-<td colspan="4"><strong>SUMA:</strong></td>
-<td colspan="2" id="totalEarnings">0.00 zł</td>
-</tr>
-</tfoot>
-</table>
-<button class="red" onclick="clearHistory()">Wyczyść historię</button>
-<button class="green" onclick="exportCSV()">Eksportuj do CSV</button>
-</div>
-</div>
-<script>
+  <div class="container">
+    <h2>Kalkulator miesięczny</h2>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł" />
+    <button id="startMonthly" class="green">Start licznika</button>
+    <button id="stopMonthly" class="red">Stop licznika</button>
+    <div class="checkbox-container">
+      <label><input type="checkbox" id="suppressConfirm" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego</label>
+    </div>
+    <label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
+    <input type="time" id="startTimeMonthly" />
+    <label><input type="checkbox" id="includePastMonthly" /> Uwzględnij czas od wybranej godziny do teraz</label>
+    <label for="timezone">Strefa czasowa:</label>
+    <select id="timezone">
+      <option value="local">Lokalna</option>
+      <option value="UTC">UTC</option>
+      <option value="Europe/Warsaw">Europa/Warszawa</option>
+    </select>
+    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+    <hr />
+    <h2>Kalkulator godzinowy</h2>
+    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" />
+    <button id="startHourly" class="green">Start licznika</button>
+    <button id="stopHourly" class="red">Stop licznika</button>
+    <div class="checkbox-container">
+      <label><input type="checkbox" id="suppressConfirmHourly" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego</label>
+    </div>
+    <label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
+    <input type="time" id="startTimeHourly" />
+    <label><input type="checkbox" id="includePastHourly" /> Uwzględnij czas od wybranej godziny do teraz</label>
+    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+  </div>
+
+  <div class="history-wrapper">
+    <h2>Opis sesji</h2>
+    <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?" style="width: 100%; margin-bottom: 10px;"></textarea>
+    <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
+    <div class="history" id="historySection">
+      <h3>Historia zarobków</h3>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Zarobek (zł)</th>
+            <th>Opis</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><strong>SUMA:</strong></td>
+            <td colspan="2" id="totalEarnings">0.00 zł</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    </div>
+  </div>
+
+  <script>
     let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart;
     let monthlyRate, hourlyRate;
 
@@ -213,17 +181,16 @@
       const wyplata = parseFloat(document.getElementById('wyplata').value);
       if (!wyplata || wyplata <= 0) return alert('Podaj poprawną wypłatę miesięczną.');
       monthlyRate = wyplata / (160 * 3600);
-      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
-      
+
+      let elapsed = 0;
       let initialEarnings = 0;
       if (document.getElementById('includePastMonthly').checked) {
+        elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
         initialEarnings = monthlyRate * elapsed;
-      } else {
-        elapsed = 0;
       }
+
       monthlyStart = Date.now() - (elapsed * 1000);
       document.getElementById('wynikMonthly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
-    
       monthlyTimer = setInterval(() => updateWynik('wynikMonthly', monthlyRate, monthlyStart), 1000);
       this.classList.replace('green', 'gold');
     };
@@ -244,17 +211,16 @@
       const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
       if (!stawka || stawka <= 0) return alert('Podaj poprawną stawkę godzinową.');
       hourlyRate = stawka / 3600;
-      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
-      
+
+      let elapsed = 0;
       let initialEarnings = 0;
       if (document.getElementById('includePastHourly').checked) {
+        elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
         initialEarnings = hourlyRate * elapsed;
-      } else {
-        elapsed = 0;
       }
+
       hourlyStart = Date.now() - (elapsed * 1000);
       document.getElementById('wynikHourly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
-    
       hourlyTimer = setInterval(() => updateWynik('wynikHourly', hourlyRate, hourlyStart), 1000);
       this.classList.replace('green', 'gold');
     };
@@ -360,8 +326,6 @@
       }
     });
 
-    
-    
     function parseSelectedTimeToTodayDate(timeStr) {
       const now = new Date();
       const [hours, minutes] = timeStr.split(':').map(Number);
@@ -377,7 +341,6 @@
       let elapsed = (now - selectedDateTime) / 1000;
       return elapsed > 0 ? elapsed : 0;
     }
-
 
     function applySavedSettings() {
       const savedStartTimeMonthly = localStorage.getItem('startTimeMonthly');
@@ -417,7 +380,6 @@
 
       return now.toLocaleString('pl-PL');
     }
-
 
     window.onload = () => {
       applySavedSettings();
