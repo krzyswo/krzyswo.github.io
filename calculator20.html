@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kalkulator zarobków z historią</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      padding: 20px;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container, .history-wrapper {
+      flex: 1 1 50%;
+      overflow-y: auto;
+      min-width: 0;
+    }
+    .history {
+      max-height: 100%;
+      overflow-y: auto;
+      border-left: 2px solid #ddd;
+      padding-left: 15px;
+      transition: all 0.3s ease;
+    }
+    input, button, textarea {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 5px;
+      width: 100%;
+    }
+    .wynik {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .green { background-color: green; color: white; }
+    .gold { background-color: gold; color: black; }
+    .red { background-color: red; color: white; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
+      word-wrap: break-word;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th { background-color: #f4f4f4; }
+    .checkbox-container {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .delete-btn {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .delete-btn:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .container, .history-wrapper {
+        flex: 1 1 100%;
+        border-left: none;
+        max-height: none;
+      }
+      .history {
+        border-left: none;
+        padding-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Kalkulator miesięczny</h2>
+    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł" />
+    <button id="startMonthly" class="green">Start licznika</button>
+    <button id="stopMonthly" class="red">Stop licznika</button>
+    <div class="checkbox-container">
+      <label><input type="checkbox" id="suppressConfirm" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego</label>
+    </div>
+    <label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
+    <input type="time" id="startTimeMonthly" />
+    <label><input type="checkbox" id="includePastMonthly" /> Uwzględnij czas od wybranej godziny do teraz</label>
+    <label for="timezone">Strefa czasowa:</label>
+    <select id="timezone"></select>
+    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+    <hr />
+    <h2>Kalkulator godzinowy</h2>
+    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" />
+    <button id="startHourly" class="green">Start licznika</button>
+    <button id="stopHourly" class="red">Stop licznika</button>
+    <div class="checkbox-container">
+      <label><input type="checkbox" id="suppressConfirmHourly" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego</label>
+    </div>
+    <label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
+    <input type="time" id="startTimeHourly" />
+    <label><input type="checkbox" id="includePastHourly" /> Uwzględnij czas od wybranej godziny do teraz</label>
+    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+  </div>
+
+  <div class="history-wrapper">
+    <h2>Opis sesji</h2>
+    <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?" style="width: 100%; margin-bottom: 10px;"></textarea>
+    <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
+    <div class="history" id="historySection">
+      <h3>Historia zarobków</h3>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Zarobek (zł)</th>
+            <th>Opis</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><strong>SUMA:</strong></td>
+            <td colspan="2" id="totalEarnings">0.00 zł</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
+      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
+    </div>
+  </div>
+
+  <script>
+    function populateTimezones() {
+      const tzSelect = document.getElementById('timezone');
+      tzSelect.innerHTML = '<option value="local">Lokalna (automatyczna)</option>';
+      let zones = [];
+      try {
+        zones = Intl.supportedValuesOf('timeZone');
+      } catch {
+        zones = ['UTC', 'Europe/Warsaw', 'America/New_York', 'Asia/Tokyo'];
+      }
+      for (const zone of zones) {
+        const opt = document.createElement('option');
+        opt.value = zone;
+        opt.textContent = zone;
+        tzSelect.appendChild(opt);
+      }
+    }
+
+    window.onload = () => {
+      populateTimezones();
+    };
+  </script>
+</body>
+</html>
