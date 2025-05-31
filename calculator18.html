@@ -220,14 +220,18 @@
       monthlyRate = wyplata / (160 * 3600);
       const elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
       
-      let initialEarnings = 0;
+      
+      let elapsed = 0;
       if (document.getElementById('includePastMonthly').checked) {
-        initialEarnings = monthlyRate * elapsed;
-      } else {
-        elapsed = 0;
+        const selectedTime = document.getElementById('startTimeMonthly').value;
+        if (selectedTime) {
+          elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
+        }
       }
+      let initialEarnings = monthlyRate * elapsed;
       monthlyStart = Date.now() - (elapsed * 1000);
       document.getElementById('wynikMonthly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
+
     
       monthlyTimer = setInterval(() => updateWynik('wynikMonthly', monthlyRate, monthlyStart), 1000);
       this.classList.replace('green', 'gold');
@@ -251,14 +255,18 @@
       hourlyRate = stawka / 3600;
       const elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
       
-      let initialEarnings = 0;
+      
+      let elapsed = 0;
       if (document.getElementById('includePastHourly').checked) {
-        initialEarnings = hourlyRate * elapsed;
-      } else {
-        elapsed = 0;
+        const selectedTime = document.getElementById('startTimeHourly').value;
+        if (selectedTime) {
+          elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
+        }
       }
+      let initialEarnings = hourlyRate * elapsed;
       hourlyStart = Date.now() - (elapsed * 1000);
       document.getElementById('wynikHourly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
+
     
       hourlyTimer = setInterval(() => updateWynik('wynikHourly', hourlyRate, hourlyStart), 1000);
       this.classList.replace('green', 'gold');
