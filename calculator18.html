@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kalkulator zarobków z historią</title>
-  <style>
+<meta charset="utf-8"/>
+<title>Kalkulator zarobków z historią</title>
+<style>
     * { box-sizing: border-box; }
 
     html, body {
@@ -104,93 +105,85 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Kalkulator miesięczny</h2>
-    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł" />
-    <button id="startMonthly" class="green">Start licznika</button>
-    <button id="stopMonthly" class="red">Stop licznika</button>
-    <div class="checkbox-container">
-      <label>
-        <input type="checkbox" id="suppressConfirm" />
+<div class="container">
+<h2>Kalkulator miesięczny</h2>
+<input id="wyplata" placeholder="Wypłata miesięczna w zł" type="number"/><div>
+<button class="green" id="startMonthly">Start licznika</button>
+<button class="red" id="stopMonthly">Stop licznika</button>
+</div>
+<button class="green" id="startMonthly">Start licznika</button>
+<button class="red" id="stopMonthly">Stop licznika</button>
+<div class="checkbox-container">
+<label>
+<input id="suppressConfirm" type="checkbox"/>
         Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego
       </label>
-    </div>
-
-    <label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
-    <input type="time" id="startTimeMonthly" />
-
-    <label>
-      <input type="checkbox" id="includePastMonthly" />
+</div>
+<label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
+<input id="startTimeMonthly" type="time"/>
+<label>
+<input id="includePastMonthly" type="checkbox"/>
       Uwzględnij czas od wybranej godziny do teraz
     </label>
-
-
-    <label for="timezone">Strefa czasowa:</label>
-    <select id="timezone">
-      <option value="local">Lokalna</option>
-      <option value="UTC">UTC</option>
-      <option value="Europe/Warsaw">Europa/Warszawa</option>
-    </select>
-
-    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
-
-    <hr />
-
-    <h2>Kalkulator godzinowy</h2>
-    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" />
-    <button id="startHourly" class="green">Start licznika</button>
-    <button id="stopHourly" class="red">Stop licznika</button>
-    <div class="checkbox-container">
-      <label>
-        <input type="checkbox" id="suppressConfirmHourly" />
+<label for="timezone">Strefa czasowa:</label>
+<select id="timezone">
+<option value="local">Lokalna</option>
+<option value="UTC">UTC</option>
+<option value="Europe/Warsaw">Europa/Warszawa</option>
+</select>
+<div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+<hr/>
+<h2>Kalkulator godzinowy</h2>
+<input id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" type="number"/><div>
+<button class="green" id="startHourly">Start licznika</button>
+<button class="red" id="stopHourly">Stop licznika</button>
+</div>
+<button class="green" id="startHourly">Start licznika</button>
+<button class="red" id="stopHourly">Stop licznika</button>
+<div class="checkbox-container">
+<label>
+<input id="suppressConfirmHourly" type="checkbox"/>
         Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego
       </label>
-    </div>
-
-    <label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
-    <input type="time" id="startTimeHourly" />
-
-    <label>
-      <input type="checkbox" id="includePastHourly" />
+</div>
+<label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
+<input id="startTimeHourly" type="time"/>
+<label>
+<input id="includePastHourly" type="checkbox"/>
       Uwzględnij czas od wybranej godziny do teraz
     </label>
-
-
-    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
-  </div>
-
-  <div class="history-wrapper">
-    <h2>Opis sesji</h2>
-    <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?" style="width: 100%; margin-bottom: 10px;"></textarea>
-
-    <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
-    <div class="history" id="historySection">
-      <h3>Historia zarobków</h3>
-      <table id="historyTable">
-        <thead>
-          <tr>
-            <th>Typ</th>
-            <th>Start</th>
-            <th>Stop</th>
-            <th>Zarobek (zł)</th>
-            <th>Opis</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4"><strong>SUMA:</strong></td>
-            <td colspan="2" id="totalEarnings">0.00 zł</td>
-          </tr>
-        </tfoot>
-      </table>
-      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
-      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
-    </div>
-  </div>
-
-  <script>
+<div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+</div>
+<div class="history-wrapper">
+<h2>Opis sesji</h2>
+<textarea id="description" placeholder="Co robiłeś podczas tej sesji?" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea>
+<button class="green" id="toggleHistory" style="margin-bottom: 10px;">Ukryj historię</button>
+<div class="history" id="historySection">
+<h3>Historia zarobków</h3>
+<table id="historyTable">
+<thead>
+<tr>
+<th>Typ</th>
+<th>Start</th>
+<th>Stop</th>
+<th>Zarobek (zł)</th>
+<th>Opis</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+<tfoot>
+<tr>
+<td colspan="4"><strong>SUMA:</strong></td>
+<td colspan="2" id="totalEarnings">0.00 zł</td>
+</tr>
+</tfoot>
+</table>
+<button class="red" onclick="clearHistory()">Wyczyść historię</button>
+<button class="green" onclick="exportCSV()">Eksportuj do CSV</button>
+</div>
+</div>
+<script>
     let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart;
     let monthlyRate, hourlyRate;
 
