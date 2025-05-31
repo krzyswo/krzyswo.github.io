@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator zarobków</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    select, input, button { width: 100%; padding: 10px; margin: 5px 0; }
+    .wynik { font-size: 24px; margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Kalkulator zarobków</h1>
+  <label for="stawka">Stawka godzinowa (zł):</label>
+  <input type="number" id="stawka" />
+
+  <label for="timezone">Strefa czasowa:</label>
+  <select id="timezone">
+    <option value="local">Lokalna (automatyczna)</option>
+<option value="Africa/Abidjan">(UTC+00:00) Africa/Abidjan</option>
+<option value="Africa/Accra">(UTC+00:00) Africa/Accra</option>
+<option value="Africa/Addis_Ababa">(UTC+03:00) Africa/Addis_Ababa</option>
+<option value="Africa/Algiers">(UTC+01:00) Africa/Algiers</option>
+<option value="Africa/Asmara">(UTC+03:00) Africa/Asmara</option>
+<option value="Africa/Asmera">(UTC+03:00) Africa/Asmera</option>
+<option value="Africa/Bamako">(UTC+00:00) Africa/Bamako</option>
+<option value="Africa/Bangui">(UTC+01:00) Africa/Bangui</option>
+<option value="Africa/Banjul">(UTC+00:00) Africa/Banjul</option>
+<option value="Africa/Bissau">(UTC+00:00) Africa/Bissau</option>
+<option value="Africa/Blantyre">(UTC+02:00) Africa/Blantyre</option>
+<option value="Africa/Brazzaville">(UTC+01:00) Africa/Brazzaville</option>
+<option value="Africa/Bujumbura">(UTC+02:00) Africa/Bujumbura</option>
+<option value="Africa/Cairo">(UTC+03:00) Africa/Cairo</option>
+<option value="Africa/Casablanca">(UTC+01:00) Africa/Casablanca</option>
+<option value="Africa/Ceuta">(UTC+02:00) Africa/Ceuta</option>
+<option value="Africa/Conakry">(UTC+00:00) Africa/Conakry</option>
+<option value="Africa/Dakar">(UTC+00:00) Africa/Dakar</option>
+<option value="Africa/Dar_es_Salaam">(UTC+03:00) Africa/Dar_es_Salaam</option>
+<option value="Africa/Djibouti">(UTC+03:00) Africa/Djibouti</option>
+<option value="Africa/Douala">(UTC+01:00) Africa/Douala</option>
+<option value="Africa/El_Aaiun">(UTC+01:00) Africa/El_Aaiun</option>
+<option value="Africa/Freetown">(UTC+00:00) Africa/Freetown</option>
+<option value="Africa/Gaborone">(UTC+02:00) Africa/Gaborone</option>
+<option value="Africa/Harare">(UTC+02:00) Africa/Harare</option>
+<option value="Africa/Johannesburg">(UTC+02:00) Africa/Johannesburg</option>
+<option value="Africa/Juba">(UTC+02:00) Africa/Juba</option>
+<option value="Africa/Kampala">(UTC+03:00) Africa/Kampala</option>
+<option value="Africa/Khartoum">(UTC+02:00) Africa/Khartoum</option>
+<option value="Africa/Kigali">(UTC+02:00) Africa/Kigali</option>
+<option value="Africa/Kinshasa">(UTC+01:00) Africa/Kinshasa</option>
+<option value="Africa/Lagos">(UTC+01:00) Africa/Lagos</option>
+<option value="Africa/Libreville">(UTC+01:00) Africa/Libreville</option>
+<option value="Africa/Lome">(UTC+00:00) Africa/Lome</option>
+<option value="Africa/Luanda">(UTC+01:00) Africa/Luanda</option>
+<option value="Africa/Lubumbashi">(UTC+02:00) Africa/Lubumbashi</option>
+<option value="Africa/Lusaka">(UTC+02:00) Africa/Lusaka</option>
+<option value="Africa/Malabo">(UTC+01:00) Africa/Malabo</option>
+<option value="Africa/Maputo">(UTC+02:00) Africa/Maputo</option>
+<option value="Africa/Maseru">(UTC+02:00) Africa/Maseru</option>
+<option value="Africa/Mbabane">(UTC+02:00) Africa/Mbabane</option>
+<option value="Africa/Mogadishu">(UTC+03:00) Africa/Mogadishu</option>
+<option value="Africa/Monrovia">(UTC+00:00) Africa/Monrovia</option>
+<option value="Africa/Nairobi">(UTC+03:00) Africa/Nairobi</option>
+<option value="Africa/Ndjamena">(UTC+01:00) Africa/Ndjamena</option>
+<option value="Africa/Niamey">(UTC+01:00) Africa/Niamey</option>
+<option value="Africa/Nouakchott">(UTC+00:00) Africa/Nouakchott</option>
+<option value="Africa/Ouagadougou">(UTC+00:00) Africa/Ouagadougou</option>
+<option value="Africa/Porto-Novo">(UTC+01:00) Africa/Porto-Novo</option>
+<option value="Africa/Sao_Tome">(UTC+00:00) Africa/Sao_Tome</option>
+<option value="Africa/Timbuktu">(UTC+00:00) Africa/Timbuktu</option>
+<option value="Africa/Tripoli">(UTC+02:00) Africa/Tripoli</option>
+<option value="Africa/Tunis">(UTC+01:00) Africa/Tunis</option>
+<option value="Africa/Windhoek">(UTC+02:00) Africa/Windhoek</option>
+<option value="America/Adak">(UTC-09:00) America/Adak</option>
+<option value="America/Anchorage">(UTC-08:00) America/Anchorage</option>
+<option value="America/Anguilla">(UTC-04:00) America/Anguilla</option>
+<option value="America/Antigua">(UTC-04:00) America/Antigua</option>
+<option value="America/Araguaina">(UTC-03:00) America/Araguaina</option>
+<option value="America/Argentina/Buenos_Aires">(UTC-03:00) America/Argentina/Buenos_Aires</option>
+<option value="America/Argentina/Catamarca">(UTC-03:00) America/Argentina/Catamarca</option>
+<option value="America/Argentina/ComodRivadavia">(UTC-03:00) America/Argentina/ComodRivadavia</option>
+<option value="America/Argentina/Cordoba">(UTC-03:00) America/Argentina/Cordoba</option>
+<option value="America/Argentina/Jujuy">(UTC-03:00) America/Argentina/Jujuy</option>
+<option value="America/Argentina/La_Rioja">(UTC-03:00) America/Argentina/La_Rioja</option>
+<option value="America/Argentina/Mendoza">(UTC-03:00) America/Argentina/Mendoza</option>
+<option value="America/Argentina/Rio_Gallegos">(UTC-03:00) America/Argentina/Rio_Gallegos</option>
+<option value="America/Argentina/Salta">(UTC-03:00) America/Argentina/Salta</option>
+<option value="America/Argentina/San_Juan">(UTC-03:00) America/Argentina/San_Juan</option>
+<option value="America/Argentina/San_Luis">(UTC-03:00) America/Argentina/San_Luis</option>
+<option value="America/Argentina/Tucuman">(UTC-03:00) America/Argentina/Tucuman</option>
+<option value="America/Argentina/Ushuaia">(UTC-03:00) America/Argentina/Ushuaia</option>
+<option value="America/Aruba">(UTC-04:00) America/Aruba</option>
+<option value="America/Asuncion">(UTC-03:00) America/Asuncion</option>
+<option value="America/Atikokan">(UTC-05:00) America/Atikokan</option>
+<option value="America/Atka">(UTC-09:00) America/Atka</option>
+<option value="America/Bahia">(UTC-03:00) America/Bahia</option>
+<option value="America/Bahia_Banderas">(UTC-06:00) America/Bahia_Banderas</option>
+<option value="America/Barbados">(UTC-04:00) America/Barbados</option>
+<option value="America/Belem">(UTC-03:00) America/Belem</option>
+<option value="America/Belize">(UTC-06:00) America/Belize</option>
+<option value="America/Blanc-Sablon">(UTC-04:00) America/Blanc-Sablon</option>
+<option value="America/Boa_Vista">(UTC-04:00) America/Boa_Vista</option>
+<option value="America/Bogota">(UTC-05:00) America/Bogota</option>
+<option value="America/Boise">(UTC-06:00) America/Boise</option>
+<option value="America/Buenos_Aires">(UTC-03:00) America/Buenos_Aires</option>
+<option value="America/Cambridge_Bay">(UTC-06:00) America/Cambridge_Bay</option>
+<option value="America/Campo_Grande">(UTC-04:00) America/Campo_Grande</option>
+<option value="America/Cancun">(UTC-05:00) America/Cancun</option>
+<option value="America/Caracas">(UTC-04:00) America/Caracas</option>
+<option value="America/Catamarca">(UTC-03:00) America/Catamarca</option>
+<option value="America/Cayenne">(UTC-03:00) America/Cayenne</option>
+<option value="America/Cayman">(UTC-05:00) America/Cayman</option>
+<option value="America/Chicago">(UTC-05:00) America/Chicago</option>
+<option value="America/Chihuahua">(UTC-06:00) America/Chihuahua</option>
+<option value="America/Ciudad_Juarez">(UTC-06:00) America/Ciudad_Juarez</option>
+<option value="America/Coral_Harbour">(UTC-05:00) America/Coral_Harbour</option>
+<option value="America/Cordoba">(UTC-03:00) America/Cordoba</option>
+<option value="America/Costa_Rica">(UTC-06:00) America/Costa_Rica</option>
+  </select>
+
+  <button onclick="startTimer()">Start</button>
+  <button onclick="stopTimer()">Stop</button>
+  <div class="wynik" id="wynik">Zarobiłeś: 0 zł</div>
+
+  <script>
+    let timer = null;
+    let start = null;
+    let stawka = 0;
+
+    function startTimer() {
+      if (timer) clearInterval(timer);
+      stawka = parseFloat(document.getElementById('stawka').value);
+      if (!stawka || stawka <= 0) {
+        alert('Podaj poprawną stawkę.');
+        return;
+      }
+      start = Date.now();
+      timer = setInterval(() => {
+        const elapsed = (Date.now() - start) / 1000;
+        const earned = stawka * (elapsed / 3600);
+        document.getElementById('wynik').innerText = 'Zarobiłeś: ' + earned.toFixed(2) + ' zł';
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    window.onload = function () {
+      const saved = localStorage.getItem('timezone');
+      if (saved) document.getElementById('timezone').value = saved;
+      document.getElementById('timezone').addEventListener('change', function () {
+        localStorage.setItem('timezone', this.value);
+      });
+    };
+  </script>
+</body>
+</html>
