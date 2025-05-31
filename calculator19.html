@@ -1,17 +1,19 @@
-
 <!DOCTYPE html>
+
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kalkulator zarobków z historią</title>
-  <style>
+<meta charset="utf-8"/>
+<title>Kalkulator zarobków z historią</title>
+<style>
     * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       padding: 0;
       height: 100vh;
       font-family: Arial, sans-serif;
     }
+
     body {
       display: flex;
       flex-direction: row;
@@ -20,11 +22,13 @@
       height: 100vh;
       overflow: hidden;
     }
+
     .container, .history-wrapper {
       flex: 1 1 50%;
       overflow-y: auto;
       min-width: 0;
     }
+
     .history {
       max-height: 100%;
       overflow-y: auto;
@@ -32,20 +36,24 @@
       padding-left: 15px;
       transition: all 0.3s ease;
     }
+
     input, button, textarea {
       padding: 10px;
       font-size: 16px;
       margin-top: 5px;
       width: 100%;
     }
+
     .wynik {
       margin-top: 20px;
       font-size: 24px;
       font-weight: bold;
     }
+
     .green { background-color: green; color: white; }
     .gold { background-color: gold; color: black; }
     .red { background-color: red; color: white; }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -53,25 +61,32 @@
       table-layout: fixed;
       word-wrap: break-word;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 5px;
       text-align: center;
       font-size: 14px;
     }
+
     th { background-color: #f4f4f4; }
+
     .checkbox-container {
       font-size: 14px;
       margin-top: 5px;
     }
+
     .delete-btn {
       color: red;
       cursor: pointer;
       font-weight: bold;
     }
+
     .delete-btn:hover {
       text-decoration: underline;
     }
+
+    /* ✅ RESPONSIVE */
     @media (max-width: 1000px) {
       body {
         flex-direction: column;
@@ -90,84 +105,323 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Kalkulator miesięczny</h2>
-    <input type="number" id="wyplata" placeholder="Wypłata miesięczna w zł" />
-    <button id="startMonthly" class="green">Start licznika</button>
-    <button id="stopMonthly" class="red">Stop licznika</button>
-    <div class="checkbox-container">
-      <label><input type="checkbox" id="suppressConfirm" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego</label>
-    </div>
-    <label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
-    <input type="time" id="startTimeMonthly" />
-    <label><input type="checkbox" id="includePastMonthly" /> Uwzględnij czas od wybranej godziny do teraz</label>
-    <label for="timezone">Strefa czasowa:</label>
-    <select id="timezone"></select>
-    <div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
-    <hr />
-    <h2>Kalkulator godzinowy</h2>
-    <input type="number" id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" />
-    <button id="startHourly" class="green">Start licznika</button>
-    <button id="stopHourly" class="red">Stop licznika</button>
-    <div class="checkbox-container">
-      <label><input type="checkbox" id="suppressConfirmHourly" /> Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego</label>
-    </div>
-    <label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
-    <input type="time" id="startTimeHourly" />
-    <label><input type="checkbox" id="includePastHourly" /> Uwzględnij czas od wybranej godziny do teraz</label>
-    <div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
-  </div>
+<div class="container">
+<h2>Kalkulator miesięczny</h2>
+<input id="wyplata" placeholder="Wypłata miesięczna w zł" type="number"/><div>
+<button class="green" id="startMonthly">Start licznika</button>
+<button class="red" id="stopMonthly">Stop licznika</button>
+</div>
+<button class="green" id="startMonthly">Start licznika</button>
+<button class="red" id="stopMonthly">Stop licznika</button>
+<div class="checkbox-container">
+<label>
+<input id="suppressConfirm" type="checkbox"/>
+        Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika miesięcznego
+      </label>
+</div>
+<label for="startTimeMonthly">Godzina rozpoczęcia pracy:</label>
+<input id="startTimeMonthly" type="time"/>
+<label>
+<input id="includePastMonthly" type="checkbox"/>
+      Uwzględnij czas od wybranej godziny do teraz
+    </label>
+<label for="timezone">Strefa czasowa:</label>
+<select id="timezone">
+<option value="local">Lokalna</option>
+<option value="UTC">UTC</option>
+<option value="Europe/Warsaw">Europa/Warszawa</option>
+</select>
+<div class="wynik" id="wynikMonthly">Zarobiłeś: 0 zł</div>
+<hr/>
+<h2>Kalkulator godzinowy</h2>
+<input id="stawkaGodzinowa" placeholder="Stawka godzinowa w zł" type="number"/><div>
+<button class="green" id="startHourly">Start licznika</button>
+<button class="red" id="stopHourly">Stop licznika</button>
+</div>
+<button class="green" id="startHourly">Start licznika</button>
+<button class="red" id="stopHourly">Stop licznika</button>
+<div class="checkbox-container">
+<label>
+<input id="suppressConfirmHourly" type="checkbox"/>
+        Nie pokazuj ponownie ostrzeżenia przy ponownym uruchomieniu licznika godzinowego
+      </label>
+</div>
+<label for="startTimeHourly">Godzina rozpoczęcia pracy:</label>
+<input id="startTimeHourly" type="time"/>
+<label>
+<input id="includePastHourly" type="checkbox"/>
+      Uwzględnij czas od wybranej godziny do teraz
+    </label>
+<div class="wynik" id="wynikHourly">Zarobiłeś: 0 zł</div>
+</div>
+<div class="history-wrapper">
+<h2>Opis sesji</h2>
+<textarea id="description" placeholder="Co robiłeś podczas tej sesji?" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea>
+<button class="green" id="toggleHistory" style="margin-bottom: 10px;">Ukryj historię</button>
+<div class="history" id="historySection">
+<h3>Historia zarobków</h3>
+<table id="historyTable">
+<thead>
+<tr>
+<th>Typ</th>
+<th>Start</th>
+<th>Stop</th>
+<th>Zarobek (zł)</th>
+<th>Opis</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+<tfoot>
+<tr>
+<td colspan="4"><strong>SUMA:</strong></td>
+<td colspan="2" id="totalEarnings">0.00 zł</td>
+</tr>
+</tfoot>
+</table>
+<button class="red" onclick="clearHistory()">Wyczyść historię</button>
+<button class="green" onclick="exportCSV()">Eksportuj do CSV</button>
+</div>
+</div>
+<script>
+    let monthlyTimer, hourlyTimer, monthlyStart, hourlyStart;
+    let monthlyRate, hourlyRate;
 
-  <div class="history-wrapper">
-    <h2>Opis sesji</h2>
-    <textarea id="description" rows="3" placeholder="Co robiłeś podczas tej sesji?" style="width: 100%; margin-bottom: 10px;"></textarea>
-    <button id="toggleHistory" class="green" style="margin-bottom: 10px;">Ukryj historię</button>
-    <div class="history" id="historySection">
-      <h3>Historia zarobków</h3>
-      <table id="historyTable">
-        <thead>
-          <tr>
-            <th>Typ</th>
-            <th>Start</th>
-            <th>Stop</th>
-            <th>Zarobek (zł)</th>
-            <th>Opis</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4"><strong>SUMA:</strong></td>
-            <td colspan="2" id="totalEarnings">0.00 zł</td>
-          </tr>
-        </tfoot>
-      </table>
-      <button onclick="clearHistory()" class="red">Wyczyść historię</button>
-      <button onclick="exportCSV()" class="green">Eksportuj do CSV</button>
-    </div>
-  </div>
+    let history = JSON.parse(localStorage.getItem('earningHistory')) || [];
+    const suppressConfirm = localStorage.getItem('suppressConfirm') === 'true';
+    const suppressConfirmHourly = localStorage.getItem('suppressConfirmHourly') === 'true';
 
-  <script>
-    function populateTimezones() {
-      const tzSelect = document.getElementById('timezone');
-      tzSelect.innerHTML = '<option value="local">Lokalna (automatyczna)</option>';
-      let zones = [];
-      try {
-        zones = Intl.supportedValuesOf('timeZone');
-      } catch {
-        zones = ['UTC', 'Europe/Warsaw', 'America/New_York', 'Asia/Tokyo'];
+    document.getElementById('suppressConfirm').checked = suppressConfirm;
+    document.getElementById('suppressConfirmHourly').checked = suppressConfirmHourly;
+
+    document.getElementById('suppressConfirm').addEventListener('change', function () {
+      localStorage.setItem('suppressConfirm', this.checked);
+    });
+    document.getElementById('suppressConfirmHourly').addEventListener('change', function () {
+      localStorage.setItem('suppressConfirmHourly', this.checked);
+    });
+
+    function confirmRestart(type = 'monthly') {
+      const key = type === 'hourly' ? 'suppressConfirmHourly' : 'suppressConfirm';
+      if (localStorage.getItem(key) === 'true') return true;
+      return confirm('Czy na pewno chcesz zrestartować licznik ' + (type === 'hourly' ? 'godzinowy' : 'miesięczny') + '?');
+    }
+
+    document.getElementById('startMonthly').onclick = function () {
+      if (monthlyStart && !confirmRestart('monthly')) return;
+      clearInterval(monthlyTimer);
+      const wyplata = parseFloat(document.getElementById('wyplata').value);
+      if (!wyplata || wyplata <= 0) return alert('Podaj poprawną wypłatę miesięczną.');
+      monthlyRate = wyplata / (160 * 3600);
+      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
+      
+      let initialEarnings = 0;
+      if (document.getElementById('includePastMonthly').checked) {
+        initialEarnings = monthlyRate * elapsed;
+      } else {
+        elapsed = 0;
       }
-      for (const zone of zones) {
-        const opt = document.createElement('option');
-        opt.value = zone;
-        opt.textContent = zone;
-        tzSelect.appendChild(opt);
+      monthlyStart = Date.now() - (elapsed * 1000);
+      document.getElementById('wynikMonthly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
+    
+      monthlyTimer = setInterval(() => updateWynik('wynikMonthly', monthlyRate, monthlyStart), 1000);
+      this.classList.replace('green', 'gold');
+    };
+
+    document.getElementById('stopMonthly').onclick = function () {
+      if (!monthlyStart) return;
+      clearInterval(monthlyTimer);
+      const elapsed = (Date.now() - monthlyStart) / 1000;
+      const zarobek = monthlyRate * elapsed;
+      saveHistory('Miesięczny', monthlyStart, Date.now(), zarobek);
+      monthlyStart = null;
+      document.getElementById('startMonthly').classList.replace('gold', 'green');
+    };
+
+    document.getElementById('startHourly').onclick = function () {
+      if (hourlyStart && !confirmRestart('hourly')) return;
+      clearInterval(hourlyTimer);
+      const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
+      if (!stawka || stawka <= 0) return alert('Podaj poprawną stawkę godzinową.');
+      hourlyRate = stawka / 3600;
+      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
+      
+      let initialEarnings = 0;
+      if (document.getElementById('includePastHourly').checked) {
+        initialEarnings = hourlyRate * elapsed;
+      } else {
+        elapsed = 0;
+      }
+      hourlyStart = Date.now() - (elapsed * 1000);
+      document.getElementById('wynikHourly').innerText = `Zarobiłeś: ${initialEarnings.toFixed(2)} zł`;
+    
+      hourlyTimer = setInterval(() => updateWynik('wynikHourly', hourlyRate, hourlyStart), 1000);
+      this.classList.replace('green', 'gold');
+    };
+
+    document.getElementById('stopHourly').onclick = function () {
+      if (!hourlyStart) return;
+      clearInterval(hourlyTimer);
+      const elapsed = (Date.now() - hourlyStart) / 1000;
+      const zarobek = hourlyRate * elapsed;
+      saveHistory('Godzinowy', hourlyStart, Date.now(), zarobek);
+      hourlyStart = null;
+      document.getElementById('startHourly').classList.replace('gold', 'green');
+    };
+
+    function updateWynik(id, rate, start) {
+      const elapsed = (Date.now() - start) / 1000;
+      document.getElementById(id).innerText = `Zarobiłeś: ${(rate * elapsed).toFixed(2)} zł`;
+    }
+
+    function saveHistory(type, start, stop, earned) {
+      const desc = document.getElementById('description').value;
+      const entry = {
+        id: Date.now(),
+        type,
+        start: new Date(start).toLocaleString(),
+        stop: new Date(stop).toLocaleString(),
+        earned: earned.toFixed(2),
+        description: desc
+      };
+      history.push(entry);
+      localStorage.setItem('earningHistory', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function deleteEntry(id) {
+      if (confirm('Czy na pewno chcesz usunąć ten wpis?')) {
+        history = history.filter(e => e.id !== id);
+        localStorage.setItem('earningHistory', JSON.stringify(history));
+        renderHistory();
       }
     }
 
+    function renderHistory() {
+      const tbody = document.getElementById('historyTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      let total = 0;
+      history.forEach(entry => {
+        total += parseFloat(entry.earned);
+        tbody.innerHTML += `
+          <tr>
+            <td>${entry.type}</td>
+            <td>${entry.start}</td>
+            <td>${entry.stop}</td>
+            <td>${entry.earned}</td>
+            <td>${entry.description}</td>
+            <td><span class="delete-btn" title="Usuń wpis" onclick="deleteEntry(${entry.id})">🗑️</span></td>
+          </tr>`;
+      });
+      document.getElementById('totalEarnings').innerText = total.toFixed(2) + ' zł';
+    }
+
+    function clearHistory() {
+      if (confirm('Czy na pewno chcesz wyczyścić całą historię?')) {
+        localStorage.removeItem('earningHistory');
+        history.length = 0;
+        renderHistory();
+      }
+    }
+
+    function exportCSV() {
+      let csv = 'Typ,Start,Stop,Zarobek (zł),Opis\n';
+      history.forEach(entry => {
+        csv += `${entry.type},${entry.start},${entry.stop},${entry.earned},"${entry.description.replace(/"/g, '""')}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'historia_zarobkow.csv';
+      link.click();
+    }
+
+    const section = document.getElementById('historySection');
+    const toggleBtn = document.getElementById('toggleHistory');
+    const historyToggleState = localStorage.getItem('historySectionHidden') === 'true';
+
+    if (historyToggleState) {
+      section.style.display = 'none';
+      toggleBtn.innerText = 'Pokaż historię';
+    } else {
+      section.style.display = 'block';
+      toggleBtn.innerText = 'Ukryj historię';
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      if (section.style.display === 'none') {
+        section.style.display = 'block';
+        this.innerText = 'Ukryj historię';
+        localStorage.setItem('historySectionHidden', 'false');
+      } else {
+        section.style.display = 'none';
+        this.innerText = 'Pokaż historię';
+        localStorage.setItem('historySectionHidden', 'true');
+      }
+    });
+
+    
+    
+    function parseSelectedTimeToTodayDate(timeStr) {
+      const now = new Date();
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      now.setHours(hours, minutes, 0, 0);
+      return now;
+    }
+
+    function getElapsedSecondsSinceSelectedTime(selectedTimeId) {
+      const selectedTime = document.getElementById(selectedTimeId).value;
+      if (!selectedTime) return 0;
+      const selectedDateTime = parseSelectedTimeToTodayDate(selectedTime);
+      const now = new Date();
+      let elapsed = (now - selectedDateTime) / 1000;
+      return elapsed > 0 ? elapsed : 0;
+    }
+
+
+    function applySavedSettings() {
+      const savedStartTimeMonthly = localStorage.getItem('startTimeMonthly');
+      const savedStartTimeHourly = localStorage.getItem('startTimeHourly');
+      const savedTimezone = localStorage.getItem('timezone');
+
+      if (savedStartTimeMonthly) document.getElementById('startTimeMonthly').value = savedStartTimeMonthly;
+      if (savedStartTimeHourly) document.getElementById('startTimeHourly').value = savedStartTimeHourly;
+      if (savedTimezone) document.getElementById('timezone').value = savedTimezone;
+    }
+
+    document.getElementById('startTimeMonthly').addEventListener('change', function () {
+      localStorage.setItem('startTimeMonthly', this.value);
+    });
+
+    document.getElementById('startTimeHourly').addEventListener('change', function () {
+      localStorage.setItem('startTimeHourly', this.value);
+    });
+
+    document.getElementById('timezone').addEventListener('change', function () {
+      localStorage.setItem('timezone', this.value);
+    });
+
+    function getCurrentTimeFormatted() {
+      const timezone = localStorage.getItem('timezone') || 'local';
+      const now = new Date();
+
+      if (timezone === 'UTC') {
+        return now.toUTCString();
+      } else if (timezone !== 'local') {
+        try {
+          return now.toLocaleString('pl-PL', { timeZone: timezone });
+        } catch (e) {
+          console.warn('Nieprawidłowa strefa czasowa, używam lokalnej.');
+        }
+      }
+
+      return now.toLocaleString('pl-PL');
+    }
+
+
     window.onload = () => {
-      populateTimezones();
+      applySavedSettings();
+      renderHistory();
     };
   </script>
 </body>
