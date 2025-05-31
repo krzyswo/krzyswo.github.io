@@ -208,7 +208,8 @@
       const wyplata = parseFloat(document.getElementById('wyplata').value);
       if (!wyplata || wyplata <= 0) return alert('Podaj poprawną wypłatę miesięczną.');
       monthlyRate = wyplata / (160 * 3600);
-      monthlyStart = Date.now();
+      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeMonthly');
+      monthlyStart = Date.now() - (elapsed * 1000);
       monthlyTimer = setInterval(() => updateWynik('wynikMonthly', monthlyRate, monthlyStart), 1000);
       this.classList.replace('green', 'gold');
     };
@@ -229,7 +230,8 @@
       const stawka = parseFloat(document.getElementById('stawkaGodzinowa').value);
       if (!stawka || stawka <= 0) return alert('Podaj poprawną stawkę godzinową.');
       hourlyRate = stawka / 3600;
-      hourlyStart = Date.now();
+      const elapsed = getElapsedSecondsSinceSelectedTime('startTimeHourly');
+      hourlyStart = Date.now() - (elapsed * 1000);
       hourlyTimer = setInterval(() => updateWynik('wynikHourly', hourlyRate, hourlyStart), 1000);
       this.classList.replace('green', 'gold');
     };
@@ -336,6 +338,24 @@
     });
 
     
+    
+    function parseSelectedTimeToTodayDate(timeStr) {
+      const now = new Date();
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      now.setHours(hours, minutes, 0, 0);
+      return now;
+    }
+
+    function getElapsedSecondsSinceSelectedTime(selectedTimeId) {
+      const selectedTime = document.getElementById(selectedTimeId).value;
+      if (!selectedTime) return 0;
+      const selectedDateTime = parseSelectedTimeToTodayDate(selectedTime);
+      const now = new Date();
+      let elapsed = (now - selectedDateTime) / 1000;
+      return elapsed > 0 ? elapsed : 0;
+    }
+
+
     function applySavedSettings() {
       const savedStartTimeMonthly = localStorage.getItem('startTimeMonthly');
       const savedStartTimeHourly = localStorage.getItem('startTimeHourly');
